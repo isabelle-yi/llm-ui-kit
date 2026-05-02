@@ -1,0 +1,89 @@
+.sender {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    transition: border-color 0.2s;
+
+&:focus-within {
+    border-color: #1677ff;
+    box-shadow: 0 0 0 2px rgba(22, 119, 255, 0.1);
+}
+
+&.sender-disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+}
+
+&.sender-loading {
+    opacity: 0.8;
+}
+
+.sender-textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    resize: none;
+    font-size: 14px;
+    line-height: 1.5;
+    min-height: 24px;
+    max-height: 120px;
+    padding: 4px 0;
+    background: transparent;
+    font-family: inherit;
+
+&::placeholder {
+    color: #bbb;
+}
+
+&:disabled {
+    cursor: not-allowed;
+    color: #999;
+}
+}
+
+.sender-btn {
+    flex-shrink: 0;
+    height: 32px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 8px;
+    background: #1677ff;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s;
+    min-width: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover :not(:disabled) {
+        background: #4096ff;
+    }
+
+    &:disabled {
+        background: #d9d9d9;
+        color: #999;
+        cursor: not-allowed;
+    }
+}
+
+    .sender-spinner {
+        width: 14px;
+        height: 14px;
+        border: 2px solid rgba(225, 255, 255, 0.3);
+        border-top-color: #fff;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
