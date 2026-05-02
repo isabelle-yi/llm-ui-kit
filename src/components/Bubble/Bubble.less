@@ -1,0 +1,85 @@
+.bubble-wrapper {
+    display: flex;
+    gap: 10px;
+    margin: 12px 0;
+    align-items: flex-start;
+}
+
+&.bubble-left {
+    flex-direction: row;
+}
+
+&.bubble-right {
+    flex-direction: row-reverse;
+}
+
+.bubble-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #e0e0e0;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}
+
+.bubble-content {
+    max-width: 70%;
+}
+
+.bubble-body {
+    padding: 10px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    line-height: 1.6;
+    word-break: break-word;
+}
+
+.bubble-footer {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+&.bubble-left .bubble-body {
+    background: #f0f0f0;
+    color: #333;
+    border-top-left-radius: 4px;
+}
+
+&.bubble-right .bubble-body {
+    background: #1677ff;
+    color: #fff;
+    border-top-right-radius: 4px;
+}
+
+&.bubble-left .bubble-footer {
+    padding-left: 4px;
+}
+
+&.bubble-right .bubble-footer {
+    justify-content: flex-end;
+    padding-right: 4px;
+}
+
+.bubble-time {
+    color: #999;
+}
+
+.bubble-status {
+    &.sending {
+        color: #999;
+    }
+
+    &.failed {
+        color: #e74c3c;
+        cursor: pointer;
+    }
+}
