@@ -17,7 +17,7 @@ function DemoChild() {
         <div
             style={{
                 padding: 24,
-                background: theme === 'dark' ? '#lalala' : '#fff',
+                background: theme === 'dark' ? '#1a1a1a' : '#fff',
                 color: theme === 'dark' ? '#fff' : '#333',
                 borderRadius: 8,
                 border: `2px solid ${primaryColor}`

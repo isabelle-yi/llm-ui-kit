@@ -22,3 +22,22 @@ function Demo() {
 export const Default: StoryObj = {
     render: () => <Demo />
 }
+
+function CustomDurationDemo() {
+  function show(duration: number) {
+    notify.success(`这条通知 ${duration} 秒后消失`, duration)
+  }
+
+  return (
+    <div style={{ display: 'flex', gap: 8 }}>
+      <button onClick={() => show(1000)}>1秒</button>
+      <button onClick={() => show(3000)}>3秒</button>
+      <button onClick={() => show(8000)}>8秒</button>
+      <button onClick={() => notify.error('手动关闭', 0)}>永久（可手动关闭）</button>
+    </div>
+  )
+}
+
+export const CustomDuration: StoryObj = {
+  render: () => <CustomDurationDemo />
+}

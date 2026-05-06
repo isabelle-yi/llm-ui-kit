@@ -28,7 +28,7 @@ export function NotificationItem({ item, onClose }: NotificationItemProps) {
         <div className={`notification-item ${item.type}`}>
             <span className="notification-icon">{getIcon(item.type)}</span>
             <span className="notification-content">{item.content}</span>
-            <button className="notification-close" onClick={() => onClose(item.id)}></button>
+            <button className="notification-close" onClick={() => onClose(item.id)}>×</button>
         </div>
     )
 }

@@ -173,7 +173,7 @@ function RealAPIStreamDemo() {
             [{ role: 'user', content: '用 Markdown 格式介绍一下 TypeScript，包括标题、列表和一段代码示例'}],
             (chunk) => { setDisplayText(prev => prev + chunk) },
             () => { setStreaming(false) },
-            (err) => { setDisplayText(`错误：${err.message}`); setStreaming(false) }
+            (err) => { setDisplayText(`✗错误：${err.message}`); setStreaming(false) }
         )
     }
 

@@ -2,6 +2,7 @@ import { createContext, useState, type ReactNode } from 'react'
 import type { ConfigContextType, ThemeMode } from './config'
 import zhCN from '../../locales/zh-CN'
 import enUS from '../../locales/en-US'
+import './ConfigProvider.less'
 
 const localeMap: Record<string, Record<string, string>> = {
     'zh-CN': zhCN,
@@ -20,7 +21,7 @@ interface ConfigProviderProps {
 export function ConfigProvider({
     children,
     defaultTheme = 'light',
-    defaultPrimaryColor = '#1890ff',
+    defaultPrimaryColor = '#1677ff',
     defaultLang = 'zh-CN'
 }: ConfigProviderProps) {
     const [theme, setTheme] = useState<ThemeMode>(defaultTheme)
