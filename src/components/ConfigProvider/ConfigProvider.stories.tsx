@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
+import { useState } from 'react'
 import { ConfigProvider } from './ConfigProvider'
 import { useConfig } from '../../hooks/useConfig'
 
@@ -17,7 +18,6 @@ function DemoChild() {
         <div
             style={{
                 padding: 24,
-                background: theme === 'dark' ? '#1a1a1a' : '#fff',
                 color: theme === 'dark' ? '#fff' : '#333',
                 borderRadius: 8,
                 border: `2px solid ${primaryColor}`
@@ -63,4 +63,35 @@ export const CustomColor: Story = {
         defaultPrimaryColor: '#e74c3c',
         children: <DemoChild />
     }
+}
+
+function InteractiveDemo() {
+  const colors = ['#1677ff', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c']
+  const [color, setColor] = useState('#1677ff')
+
+  return (
+    <ConfigProvider key={color} defaultPrimaryColor={color}>
+      <DemoChild />
+      <div style={{ padding: '0 24px 24px', display: 'flex', gap: 8 }}>
+        {colors.map(c => (
+          <button
+            key={c}
+            onClick={() => setColor(c)}
+            style={{
+              background: c,
+              border: color === c ? '3px solid #1677ff' : '3px solid transparent',
+              width: 32,
+              height: 32,
+              borderRadius: '50%',
+              cursor: 'pointer'
+            }}
+          />
+        ))}
+      </div>
+    </ConfigProvider>
+  )
+}
+
+export const Interactive: Story = {
+  render: () => <InteractiveDemo />
 }
