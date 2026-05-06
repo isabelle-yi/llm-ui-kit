@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
@@ -8,6 +8,7 @@ import './Mark.less'
 export interface MarkProps {
     content: string
     maxRows?: number
+    streaming?: boolean
 }
 
 function CodeBlock({ language, children }: { language: string; children: string })
@@ -40,17 +41,34 @@ function CodeBlock({ language, children }: { language: string; children: string 
     )
 }
 
-export function Mark({ content, maxRows = 15 }: MarkProps) {
+function sanitizeChunk(text: string): string {
+    let result = text
+    const fenceCount = (result.match(/```/g) || []).length
+    if (fenceCount % 2 !== 0) {
+        result += '\n```'
+    }
+    return result
+}
+
+export function Mark({ content, maxRows = 15, streaming = false }: MarkProps) {
     const [expanded, setExpanded] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null)
+    
+    const safeContent = streaming ? sanitizeChunk(content) : content
     const lineCount = content.split('\n').length
-    const shouldFold = lineCount > maxRows && !expanded
+    const shouldFold = !streaming && lineCount > maxRows && !expanded
 
     const displayContent = shouldFold
     ? content.split('\n').slice(0, maxRows).join('\n') + '\n\n...'
-    : content
-
+    : safeContent
+    
+    useEffect(() => {
+        if (streaming && containerRef.current) {
+            containerRef.current.scrollTop = containerRef.current.scrollHeight
+        }
+    }, [content, streaming])
     return (
-        <div className="mark-container">
+        <div className="mark-container" ref={containerRef}>
             <div 
              className={`mark-body ${shouldFold ? 'mark-folder' : ''}`}
              style={shouldFold ? { maxHeight: maxRows * 24 } : undefined}
@@ -76,8 +94,9 @@ export function Mark({ content, maxRows = 15 }: MarkProps) {
                 >
                     {displayContent}
                 </ReactMarkdown>
+                {streaming && <span className="mark-cursor">▍</span>}
             </div>
-            {lineCount > maxRows && (
+            {!streaming && lineCount > maxRows && (
                 <button className="mark-toggle" onClick={() => setExpanded(!expanded)}>
                     {expanded ? '收起' : '展开全部'}
                 </button>
