@@ -51,6 +51,12 @@ hello('World')
 ## 链接测试
 
 访问 [React 官网](https://react.dev) 了解更多。
+
+## 图片渲染测试
+
+下面是一张示例图片：
+
+![示例图片](https://picsum.photos/400/200)
 `
 
 export const Default: Story = {
@@ -80,4 +86,16 @@ for i in range(10):
         print(fibonacci(i))         
 \`\`\``
     }
+}
+
+export const WithImage: Story = {
+  args: {
+    content: `## 图片渲染测试
+
+下面是一张示例图片：
+
+![示例图片](https://picsum.photos/400/200)
+
+图片下方继续显示文字，验证图片渲染和排版是否正常。`
+  }
 }
