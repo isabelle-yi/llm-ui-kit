@@ -1,44 +1,13 @@
 import { useState, useEffect, useRef } from 'react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter'
-import { oneLight } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { CodeHighlighter } from '../CodeHighlighter'
 import './Mark.less'
 
 export interface MarkProps {
     content: string
     maxRows?: number
     streaming?: boolean
-}
-
-function CodeBlock({ language, children }: { language: string; children: string })
-{
-    const [copied,setCopied] = useState(false)
-    const code = String(children).replace(/\n$/, '')
-
-    function handleCopy() {
-        navigator.clipboard.writeText(code)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-    }
-    
-    return (
-        <div className="mark-code-block">
-            <div className="mark-code-header">
-                <span className="mark-code-lang">{language || 'text'}</span>
-                <button className="mark-code-copy" onClick={handleCopy}>
-                    {copied ? '已复制' : '复制'}
-                </button>
-            </div>
-            <SyntaxHighlighter
-              style={oneLight}
-              language={language || 'text'}
-              PreTag="div"
-            >
-                {code}
-            </SyntaxHighlighter>
-        </div>
-    )
 }
 
 function sanitizeChunk(text: string): string {
@@ -85,10 +54,15 @@ export function Mark({ content, maxRows = 15, streaming = false }: MarkProps) {
                             }
 
                             return (
-                                <CodeBlock language={match?.[1] || ''}>
-                                    {String(children)}
-                                </CodeBlock>
+                               <CodeHighlighter
+                                code={String(children)}
+                                language={match?.[1] || 'text'}
+                                maxLines={20}
+                               />
                             )
+                        },
+                        img({ src, alt }) {
+                            return <img src={src} alt={alt} style={{ maxWidth: '100%', borderRadius: 8 }} />
                         }
                     }}
                 >
