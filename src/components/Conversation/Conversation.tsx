@@ -141,7 +141,9 @@ export function ConversationItem({
           {formatConvTime(conversation.lastTime)}
         </span>
       </div>
-      <div className="conversation-item-preview">{lastMessage}</div>
+      <div className="conversation-item-preview"> 
+        {lastMessage || '开始新对话...'}
+      </div>
       
       <div className="conversation-item-actions">
         <button

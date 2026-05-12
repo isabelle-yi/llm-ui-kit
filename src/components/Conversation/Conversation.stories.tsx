@@ -84,7 +84,7 @@ function FullDemo() {
     }
 
     return (
-        <div style={{ maxWidth: 340, background: '#fff'}}>
+        <div style={{ background: '#fff'}}>
             <Conversation
                conversations={conversations}
                activeId={activeId}
@@ -124,6 +124,7 @@ function SidebarDemo() {
           onSelect={setActiveId}
           onDelete={(id) => setConvs(prev => prev.filter(c => c.id !== id))}
           onTogglePin={(id) => setConvs(prev => prev.map(c => c.id === id ? { ...c, isPinned: !c.isPinned } : c))}
+          onToggleFavorite={(id) => setConvs(prev => prev.map(c => c.id === id ? { ...c, isFavorited: !c.isFavorited } : c))}
         />
       </Sidebar>
     </div>
