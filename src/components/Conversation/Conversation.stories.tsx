@@ -11,7 +11,7 @@ const meta: Meta<typeof Conversation> = {
 export default meta
 type Story = StoryObj<typeof Conversation>
 
-const mockConversations: ConversationData[] = [
+const initialConversations: ConversationData[] = [
     {
         id: '1',
         title: 'React 组件设计',
@@ -54,28 +54,59 @@ const mockConversations: ConversationData[] = [
   }
 ]
 
-export const Default: Story = {
-    args: {
-        conversations: mockConversations,
-        activeId: '1'
-    }
-}
+function FullDemo() {
+    const [conversations, setConversations] = useState<ConversationData[]>(initialConversations)
+    const [activeId, setActiveId] = useState('1');
 
-function InteractiveDemo() {
-    const [activeId, setActiveId] = useState('1')
+    function handleDelete(id: string) {
+        setConversations(prev => prev.filter(c => c.id !== id))
+        if (activeId === id && conversations.length > 1) {
+            setActiveId(conversations[0].id === id ? conversations[1].id : conversations[0].id)
+        }
+    }
+
+    function handleTogglePin(id: string) {
+        setConversations(prev => 
+            prev.map(c => (c.id === id ? { ...c, isPinned: !c.isPinned } : c))
+        )
+    }
+
+    function handleToggleFavorite(id: string) {
+        setConversations(prev => 
+            prev.map(c => (c.id === id ? { ...c, isFavorited: !c.isFavorited } : c))
+        )
+    }
+
+    function handleRename(id: string, newTitle: string) {
+        setConversations(prev => 
+            prev.map(c => (c.id === id ? { ...c, title: newTitle } : c ))
+        )
+    }
+
     return (
-        <div style={{ maxWidth: 320,background: '#fff'}}>
-          <Conversation
-            conversations={mockConversations}
-            activeId={activeId}
-            onSelect={setActiveId}
-          />
+        <div style={{ maxWidth: 340, background: '#fff'}}>
+            <Conversation
+               conversations={conversations}
+               activeId={activeId}
+               onSelect={setActiveId}
+               onDelete={handleDelete}
+               onTogglePin={handleTogglePin}
+               onToggleFavorite={handleToggleFavorite}
+               onRename={handleRename}
+            />
         </div>
     )
 }
 
-export const Interactive: Story = {
-    render: () => <InteractiveDemo/>
+export const Default: Story = {
+    args: {
+        conversations: initialConversations,
+        activeId: '1'
+    }
+}
+
+export const FullInteractive: Story = {
+    render: () => <FullDemo/>
 }
 
 export const Empty: Story = {
