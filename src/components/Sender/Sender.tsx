@@ -5,6 +5,8 @@ export interface SenderProps {
     placeholder?: string
     disabled?: boolean
     loading?: boolean
+    value?: string
+    onChange?: (value: string) => void
     onSend?: (text: string) => void
 }
 
@@ -12,12 +14,24 @@ export function Sender({
     placeholder = '输入消息...',
     disabled = false,
     loading = false,
+    value: externalValue,
+    onChange: externalOnChange,
     onSend
 }: SenderProps) {
-    const [value, setValue] = useState('')
+    const [internalValue, setInternalValue] = useState('')
+    const value = externalValue !== undefined ? externalValue : internalValue
+    function setValue(v: string) {
+        if (externalOnChange) {
+            externalOnChange(v)
+        }
+        if (externalValue === undefined) {
+            setInternalValue(v)
+        }
+    }
+    
     const isComposing = useRef(false)
     const textareaRef = useRef<HTMLTextAreaElement>(null)
-
+    
     const adjustHeight = useCallback(() => {
         const el = textareaRef.current
         if(!el) return
@@ -36,7 +50,8 @@ export function Sender({
 
     function handleCompositionEnd(e: CompositionEvent<HTMLTextAreaElement>) {
         isComposing.current = false
-        setValue((e.target as HTMLTextAreaElement).value)
+        const v = (e.target as HTMLTextAreaElement).value
+        setValue(v)
     }
 
     function handleKeyDown(e: KeyboardEvent<HTMLTextAreaElement>) {
@@ -50,7 +65,8 @@ export function Sender({
         const text = value.trim()
         if (!text || disabled || loading) return
         onSend?.(text)
-        setValue('')
+        if (externalOnChange) externalOnChange('')
+        else setInternalValue('')
     }
 
     const canSend = value.trim().length > 0 && !disabled && !loading
