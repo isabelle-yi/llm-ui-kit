@@ -1,2 +1,2 @@
-export { Conversation, ConversationItem } from './Conversation'
-export type { ConversationData, ConversationProps, ConversationItemProps, ConversationCallbacks } from './Conversation' 
+export { Conversation, ConversationItem, Sidebar } from './Conversation'
+export type { ConversationData, ConversationProps, ConversationItemProps, ConversationCallbacks, SidebarProps } from './Conversation' 

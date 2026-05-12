@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import { Conversation, type ConversationData } from './Conversation'
+import { Conversation, type ConversationData, Sidebar } from './Conversation'
 import { useState } from 'react'
 
 const meta: Meta<typeof Conversation> = {
@@ -98,6 +98,38 @@ function FullDemo() {
     )
 }
 
+function SidebarDemo() {
+  const [convs, setConvs] = useState(initialConversations)
+  const [activeId, setActiveId] = useState('1')
+
+  function handleNewChat() {
+    const newConv: ConversationData = {
+      id: String(Date.now()),
+      title: '新会话',
+      lastMessage: '',
+      lastTime: Date.now(),
+      isPinned: false,
+      isFavorited: false
+    }
+    setConvs(prev => [newConv, ...prev])
+    setActiveId(newConv.id)
+  }
+
+  return (
+    <div style={{ height: 500 }}>
+      <Sidebar title="AI 对话" onNewChat={handleNewChat}>
+        <Conversation
+          conversations={convs}
+          activeId={activeId}
+          onSelect={setActiveId}
+          onDelete={(id) => setConvs(prev => prev.filter(c => c.id !== id))}
+          onTogglePin={(id) => setConvs(prev => prev.map(c => c.id === id ? { ...c, isPinned: !c.isPinned } : c))}
+        />
+      </Sidebar>
+    </div>
+  )
+}
+
 export const Default: Story = {
     args: {
         conversations: initialConversations,
@@ -114,4 +146,8 @@ export const Empty: Story = {
         conversations: [],
         activeId: undefined
     }
+}
+
+export const SidebarView: Story = {
+  render: () => <SidebarDemo />
 }

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, type KeyboardEvent } from 'react'
+import { useState, useRef, useEffect, type KeyboardEvent, type ReactNode } from 'react'
 import './Conversation.less'
 
 export interface ConversationData {
@@ -233,4 +233,26 @@ export function Conversation({
         ))}
       </div>
     )
+}
+
+export interface SidebarProps {
+  title?: string
+  children: ReactNode
+  onNewChat?: () => void
+}
+
+export function Sidebar({ title = '会话列表', children, onNewChat }: SidebarProps) {
+  return (
+    <div className="conversation-sidebar">
+      <div className="conversation-sidebar-header">
+        <span className="conversation-sidebar-title">{title}</span>
+        {onNewChat && (
+          <button className="conversation-sidebar-new-btn" onClick={onNewChat}>
+            + 新建
+          </button>
+        )}
+      </div>
+      <div className="conversation-sidebar-body">{children}</div>
+    </div>
+  )
 }
