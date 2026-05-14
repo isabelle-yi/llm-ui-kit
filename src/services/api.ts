@@ -5,7 +5,7 @@ export interface ChatMessage {
 
 export async function chatStream(
     messages: ChatMessage[],
-    onChunk: (text: string) => void,
+    onChunk: (data: { type: 'content' | 'reasoning'; text: string }) => void,
     onDone: () => void,
     onError: (err: Error) => void
 ){
@@ -24,7 +24,7 @@ export async function chatStream(
                 Authorization: `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: 'deepseek-chat',
+                model: 'deepseek-reasoner',
                 messages,
                 stream: true
             })
@@ -66,10 +66,14 @@ export async function chatStream(
 
                 try {
                     const json = JSON.parse(data)
-                    const content = json.choices?.[0]?.delta?.content
-                    if (content) {
-                        onChunk(content)
-                    }
+                    const delta = json.choices?.[0]?.delta
+                    if (delta?.reasoning_content) {
+                          onChunk({ type: 'reasoning', text: delta.reasoning_content })
+                        }
+                        if (delta?.content) {
+                          onChunk({ type: 'content', text: delta.content })
+                        }
+                    
                 } catch {
 
                 }

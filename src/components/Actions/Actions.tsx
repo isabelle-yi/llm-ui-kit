@@ -9,7 +9,7 @@ export interface ActionItem {
 }
 
 export interface ActionsProps {
-    items: ActionItem[]
+    items?: ActionItem[]
     showCopy?: boolean
     showRegenerate?: boolean
     onCopy?: () => void
