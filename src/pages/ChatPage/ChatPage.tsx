@@ -319,7 +319,7 @@ export function ChatPage() {
                             <Bubble
                                 position={msg.role === 'user' ? 'right' : 'left'}
                                 avatar={undefined}
-                                timestamp={msg.timestamp}
+                                timestamp={msg.role === 'user' ? msg.timestamp : undefined}
                                 status={msg.role === 'assistant' ? (msg.status === 'streaming' ? 'sending' : msg.status === 'error' ? 'failed' : 'sent') : 'sent'}
                             >
                                 {msg.content ? (
