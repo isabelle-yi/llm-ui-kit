@@ -20,16 +20,20 @@ export interface ChatMessageData {
 }
 
 const promptsConfig = [
-    {
-        label: '',
-        items: [
-            { key: 'p1', title: '帮我写一份辞职信', icon: '✉️' },
-            { key: 'p2', title: '用 TypeScript 写排序算法', icon: '💻' },
-            { key: 'p3', title: '把这段话翻译成英文', icon: '🌐' }
-        ]
-    }
+  {
+    label: '',
+    items: [
+      { key: 'p1', title: '帮我写一份辞职信', icon: '✉️' },
+      { key: 'p2', title: '用 TypeScript 写排序算法', icon: '💻' },
+      { key: 'p3', title: '把这段话翻译成英文', icon: '🌐' },
+      { key: 'p4', title: '解释什么是量子计算', icon: '🔬' },
+      { key: 'p5', title: '写一份周报总结', icon: '📋' },
+      { key: 'p6', title: '优化这段代码的性能', icon: '⚡' },
+      { key: 'p7', title: '帮我润色这段文案', icon: '✨' },
+      { key: 'p8', title: '推荐几本前端开发书籍', icon: '📚' },
+    ]
+  }
 ]
-
 function genId(): string {
     return Date.now().toString(36) + Math.random().toString(36).slice(2)
 }
@@ -302,7 +306,12 @@ export function ChatPage() {
                     {messages.length === 0 && (
                         <div className="chat-empty">
                             <h2>👋 欢迎使用AI对话助手</h2>
-                            <p>选择下方提示词开始对话，或直接输入你的问题</p>
+                            <div className="chat-empty-prompts">
+                                <Prompts
+                                   groups={promptsConfig}
+                                   onSelect={handlePropmptSelect}
+                                />
+                            </div>
                         </div>
                     )}
 
@@ -344,12 +353,6 @@ export function ChatPage() {
                 </div>
 
                 <div className="chat-input-area">
-                  {messages.length === 0 && (
-                    <Prompts
-                      groups={promptsConfig}
-                      onSelect={handlePropmptSelect}
-                    />
-                  )}
                     <Sender
                         value={inputValue}
                         onChange={setInputValue}
