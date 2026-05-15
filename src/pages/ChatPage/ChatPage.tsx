@@ -4,14 +4,14 @@ import { Bubble } from '../../components/Bubble'
 import { Sender } from '../../components/Sender'
 import { Mark } from '../../components/Mark'
 import { Think } from '../../components/Think'
-import { Prompts,type PromptItem } from '../../components/Prompts'
+import { Prompts, type PromptItem } from '../../components/Prompts'
 import { Actions } from '../../components/Actions'
 import { notify } from '../../components/Notification'
 import { chatStream, type ChatMessage } from '../../services/api'
 import './ChatPage.less'
 
 export interface ChatMessageData {
-    id: string 
+    id: string
     role: 'user' | 'assistant'
     content: string
     status: 'sending' | 'streaming' | 'done' | 'error'
@@ -20,14 +20,14 @@ export interface ChatMessageData {
 }
 
 const promptsConfig = [
-  {
-    label: '',
-    items: [
-      { key: 'p1', title: '帮我写一份辞职信', icon: '✉️' },
-      { key: 'p2', title: '用 TypeScript 写排序算法', icon: '💻' },
-      { key: 'p3', title: '把这段话翻译成英文', icon: '🌐' }
-    ]
-  }
+    {
+        label: '',
+        items: [
+            { key: 'p1', title: '帮我写一份辞职信', icon: '✉️' },
+            { key: 'p2', title: '用 TypeScript 写排序算法', icon: '💻' },
+            { key: 'p3', title: '把这段话翻译成英文', icon: '🌐' }
+        ]
+    }
 ]
 
 function genId(): string {
@@ -79,10 +79,10 @@ export function ChatPage() {
         } else {
             setMessages([])
         }
-    },[activeId])
+    }, [activeId])
 
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth'})
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
     }, [messages])
 
     useEffect(() => {
@@ -127,31 +127,31 @@ export function ChatPage() {
     }
 
     function handleTogglePin(id: string) {
-        setConversations(prev => 
+        setConversations(prev =>
             prev.map(c => (c.id === id ? { ...c, isPinned: !c.isPinned } : c))
         )
     }
 
     function handleToggleFavorite(id: string) {
         setConversations(prev =>
-            prev.map(c => (c.id === id ? {...c, isFavorited: !c.isFavorited } : c))
+            prev.map(c => (c.id === id ? { ...c, isFavorited: !c.isFavorited } : c))
         )
     }
-    
+
     function updateConvTitle(id: string, title: string) {
-        setConversations(prev => 
+        setConversations(prev =>
             prev.map(c => (c.id === id ? { ...c, title } : c))
         )
     }
 
     function updateConvPreview(id: string, preview: string, time: number) {
-        setConversations(prev => 
-            prev.map(c => (c.id === id ? { ...c, lastMessage: preview.slice(0,30),lastTime: time} : c))
+        setConversations(prev =>
+            prev.map(c => (c.id === id ? { ...c, lastMessage: preview.slice(0, 30), lastTime: time } : c))
         )
     }
 
     function handleSend(text: string) {
-        if(!activeId) {
+        if (!activeId) {
             pendingMessageRef.current = text
             handleNewChat()
             return
@@ -159,10 +159,10 @@ export function ChatPage() {
         sendRealMessage(text)
     }
 
-    function sendRealMessage(text: string){
+    function sendRealMessage(text: string) {
         setInputValue('')
 
-        const userMsg: ChatMessageData ={
+        const userMsg: ChatMessageData = {
             id: genId(),
             role: 'user',
             content: text,
@@ -189,62 +189,50 @@ export function ChatPage() {
         const history: ChatMessage[] = newMessages
             .filter(m => m.content || m.status === 'streaming')
             .map(m => ({
-               role: m.role,
-               content: m.role === 'assistant' && m.status === 'streaming' ? '' : m.content
-        }))
+                role: m.role,
+                content: m.role === 'assistant' && m.status === 'streaming' ? '' : m.content
+            }))
 
-        if(history.length > 0 && history[history.length - 1].role === 'assistant') {
+        if (history.length > 0 && history[history.length - 1].role === 'assistant') {
             history.pop()
         }
 
         chatStream(
             history,
-           (chunk) => {
-              if (chunk.type === 'reasoning') {
-                setMessages(prev => {
-                  const updated = [...prev]
-                  const last = updated[updated.length - 1]
-                  if (last.role === 'assistant') {
-                    last.thinkContent = (last.thinkContent || '') + chunk.text
-                  }
-                  return updated
-                })
-              } else {
-                setMessages(prev => {
-                  const updated = [...prev]
-                  const last = updated[updated.length - 1]
-                  if (last.role === 'assistant') {
-                    last.content += chunk.text
-                  }
-                  return updated
-                })
-              }
+            (chunk) => {
+                if (chunk.type === 'reasoning') {
+                    setMessages(prev => prev.map(msg => 
+                        msg.role === 'assistant' && msg.status === 'streaming'
+                            ? { ...msg, thinkContent: (msg.thinkContent || '') + chunk.text }
+                            : msg
+                    ))
+                } else {
+                    setMessages(prev => prev.map(msg => 
+                        msg.role === 'assistant' && msg.status === 'streaming'
+                            ? { ...msg, content: msg.content + chunk.text }
+                            : msg
+                    ))
+                }
             },
             () => {
                 setStreaming(false)
-                setMessages(prev => {
-                    const updated = [...prev]
-                    const last = updated[updated.length - 1]
-                    if (last.role === 'assistant') {
-                        last.status = 'done'
-                        last.timestamp = Date.now()
-                        updateConvPreview(activeId, last.content, Date.now())
-                    }
-                    return updated
-                })
+                setMessages(prev => prev.map(msg => 
+                    msg.role === 'assistant' && msg.status === 'streaming'
+                        ? { ...msg, status: 'done', timestamp: Date.now() }
+                        : msg
+                ))
+                const last = messages[messages.length - 1]
+                if (last?.role === 'assistant') {
+                    updateConvPreview(activeId, last.content, Date.now())
+                }
             },
             (err) => {
                 setStreaming(false)
-                setMessages(prev => {
-                    const updated = [...prev]
-                    const last = updated[updated.length - 1]
-                    if (last.role === 'assistant') {
-                        last.status = 'error'
-                        last.content = `❌ 错误：${err.message}`
-                    }
-                    updateConvPreview(activeId, err.message, Date.now())
-                    return updated
-                })
+                setMessages(prev => prev.map(msg => 
+                    msg.role === 'assistant' && msg.status === 'streaming'
+                        ? { ...msg, status: 'error', content: `❌ 错误：${err.message}` }
+                        : msg
+                ))
                 const msg = err.message
                 if (msg.includes('401') || msg.includes('403') || msg.includes('API Key')) {
                     notify.error('API Key 无效或过期')
@@ -260,7 +248,7 @@ export function ChatPage() {
             }
         )
     }
-    
+
     function handleCopy(text: string) {
         navigator.clipboard.writeText(text)
         notify.success('已复制到剪切板')
@@ -279,82 +267,82 @@ export function ChatPage() {
     function handlePropmptSelect(item: PromptItem) {
         setInputValue(item.title)
     }
-    
+
     return (
         <div className="chat-page">
-          <Sidebar title="AI 对话" onNewChat={handleNewChat}>
-            <Conversation
-               conversations={conversations}
-               activeId={activeId}
-               onSelect={setActiveId}
-               onDelete={handleDeleteConv}
-               onTogglePin={handleTogglePin}
-               onToggleFavorite={handleToggleFavorite}
-               onRename={(id, title) => updateConvTitle(id, title)}
-            />
-          </Sidebar>
-
-          <div className="chat-main">
-            <div className="chat-messages">
-                {messages.length === 0 && (
-                    <div className="chat-empty">
-                        <h2>👋 欢迎使用AI对话助手</h2>
-                        <p>选择下方提示词开始对话，或直接输入你的问题</p>
-                    </div>
-                )}
-
-                {messages.map(msg => (
-                    <div key={msg.id}>
-                        {msg.role === 'assistant' && msg.thinkContent && (
-                            <Think
-                                status={msg.status === 'streaming' ? 'thinking' : 'done' }
-                                defaultExpanded={false}
-                            > 
-                                {msg.thinkContent}
-                            </Think>
-                        )}
-                        <Bubble
-                            position={msg.role === 'user' ? 'right' : 'left'}
-                            avatar={msg.role === 'user' ? '😊' : '🤖'}
-                            timestamp={msg.timestamp}
-                            status={msg.role === 'assistant' ? (msg.status === 'streaming' ? 'sending' : msg.status === 'error' ? 'failed' : 'sent') : 'sent'}
-                        >
-                            {msg.content ? (
-                                <Mark content={msg.content} streaming={msg.status === 'streaming'}/>
-                            ) : msg.status === 'streaming' ? (
-                                <Mark content="" streaming />
-                            ) : null}
-                        </Bubble>
-
-                        {msg.role === 'assistant' && msg.status === 'done' && (
-                            <div className="chat-actions-row">
-                                <Actions
-                                  onCopy={() => handleCopy(msg.content)}
-                                  onRegenerate={handleRegenerate}
-                                />
-                            </div>
-                        )}
-                    </div>
-                ))}
-
-                <div ref={messagesEndRef} />
-            </div>
-
-            <div className="chat-input-area">
-                <Prompts
-                    groups={promptsConfig}
-                    onSelect={handlePropmptSelect}
+            <Sidebar title="AI 对话" onNewChat={handleNewChat}>
+                <Conversation
+                    conversations={conversations}
+                    activeId={activeId}
+                    onSelect={setActiveId}
+                    onDelete={handleDeleteConv}
+                    onTogglePin={handleTogglePin}
+                    onToggleFavorite={handleToggleFavorite}
+                    onRename={(id, title) => updateConvTitle(id, title)}
                 />
-                <Sender
-                    value={inputValue}
-                    onChange={setInputValue}
-                    placeholder="输入你的问题，Enter发送，Shift+Enter 换行"
-                    loading={streaming}
-                    disabled={streaming}
-                    onSend={handleSend}
-                />
+            </Sidebar>
+
+            <div className="chat-main">
+                <div className="chat-messages">
+                    {messages.length === 0 && (
+                        <div className="chat-empty">
+                            <h2>👋 欢迎使用AI对话助手</h2>
+                            <p>选择下方提示词开始对话，或直接输入你的问题</p>
+                        </div>
+                    )}
+
+                    {messages.map(msg => (
+                        <div key={msg.id}>
+                            {msg.role === 'assistant' && msg.thinkContent && (
+                                <Think
+                                    status={msg.status === 'streaming' ? 'thinking' : 'done'}
+                                    defaultExpanded={false}
+                                >
+                                    {msg.thinkContent}
+                                </Think>
+                            )}
+                            <Bubble
+                                position={msg.role === 'user' ? 'right' : 'left'}
+                                avatar={msg.role === 'user' ? '😊' : '🤖'}
+                                timestamp={msg.timestamp}
+                                status={msg.role === 'assistant' ? (msg.status === 'streaming' ? 'sending' : msg.status === 'error' ? 'failed' : 'sent') : 'sent'}
+                            >
+                                {msg.content ? (
+                                    <Mark content={msg.content} streaming={msg.status === 'streaming'} />
+                                ) : msg.status === 'streaming' ? (
+                                    <Mark content="" streaming />
+                                ) : null}
+                            </Bubble>
+
+                            {msg.role === 'assistant' && msg.status === 'done' && (
+                                <div className="chat-actions-row">
+                                    <Actions
+                                        onCopy={() => handleCopy(msg.content)}
+                                        onRegenerate={handleRegenerate}
+                                    />
+                                </div>
+                            )}
+                        </div>
+                    ))}
+
+                    <div ref={messagesEndRef} />
+                </div>
+
+                <div className="chat-input-area">
+                    <Prompts
+                        groups={promptsConfig}
+                        onSelect={handlePropmptSelect}
+                    />
+                    <Sender
+                        value={inputValue}
+                        onChange={setInputValue}
+                        placeholder="输入你的问题，Enter发送，Shift+Enter 换行"
+                        loading={streaming}
+                        disabled={streaming}
+                        onSend={handleSend}
+                    />
+                </div>
             </div>
-          </div>
         </div>
     )
-} 
+}

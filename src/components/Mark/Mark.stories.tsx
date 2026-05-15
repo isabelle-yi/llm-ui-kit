@@ -65,15 +65,6 @@ export const Default: Story = {
     }
 }
 
-const longContent = Array.from({ length: 30 }, (_, i) => `这是第${i+1}行内容，用于测试超长文本自动折叠功能。`).join('\n\n')
-
-export const FoldLongText: Story = {
-    args: {
-        content: longContent,
-        maxRows: 10
-    }
-}
-
 export const CodeOnly: Story = {
     args: {
         content: `\`\`\`python
