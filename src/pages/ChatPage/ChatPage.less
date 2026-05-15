@@ -21,6 +21,14 @@
     margin: 0 auto;
     padding: 24px 0;
     background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    transition: opacity 0.1s;
+    opacity: 1;
+
+    .chat-messages.switching {
+    opacity: 0;
+}
 }
 
 .chat-empty {

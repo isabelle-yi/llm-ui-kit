@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback, useEffect } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { Conversation, Sidebar, type ConversationData } from '../../components/Conversation'
 import { Bubble } from '../../components/Bubble'
 import { Sender } from '../../components/Sender'
@@ -66,11 +66,12 @@ function saveMessages(convId: string, msgs: ChatMessageData[]) {
 
 export function ChatPage() {
     const [conversations, setConversations] = useState<ConversationData[]>(loadConversations)
-    const [activeId, setActiveId] = useState<string>(conversations[0]?.id || '')
-    const activeConv = conversations.find(c => c.id === activeId)
+    const [activeId, setActiveId] = useState<string>('')
 
     const [messages, setMessages] = useState<ChatMessageData[]>([])
     const [streaming, setStreaming] = useState(false)
+    const [switching, setSwitching] = useState(false)
+    const chatMessagesRef = useRef<HTMLDivElement>(null)
 
     const [inputValue, setInputValue] = useState('')
 
@@ -78,12 +79,12 @@ export function ChatPage() {
     const pendingMessageRef = useRef<string | null>(null)
 
     useEffect(() => {
+      setMessages([]);
         if (activeId) {
-            setMessages(loadMessages(activeId))
-        } else {
-            setMessages([])
+          const msgs = loadMessages(activeId);
+          setMessages(msgs);
         }
-    }, [activeId])
+    }, [activeId]);
 
     useEffect(() => {
         if (streaming && messagesEndRef.current) {
@@ -92,7 +93,7 @@ export function ChatPage() {
             block: 'end'
            })
         }
-    }, [messages, streaming])
+    }, [streaming])
 
     useEffect(() => {
         saveConversations(conversations)
@@ -113,25 +114,32 @@ export function ChatPage() {
     }, [activeId])
 
     function handleNewChat() {
+        const newId = genId();
         const newConv: ConversationData = {
-            id: genId(),
+            id: newId,
             title: '新会话',
             lastMessage: '',
             lastTime: Date.now(),
             isPinned: false,
             isFavorited: false
         }
-        setConversations(prev => [newConv, ...prev])
-        setActiveId(newConv.id)
+
+        setMessages([]);
         setInputValue('')
+        setConversations(prev => {
+            const updated = [newConv, ...prev]
+            saveConversations(updated) 
+            return updated
+        })
+        setActiveId(newId)
     }
 
     function handleDeleteConv(id: string) {
         setConversations(prev => prev.filter(c => c.id !== id))
         localStorage.removeItem(`demo-messages-${id}`)
         if (activeId === id) {
-            const remaining = conversations.filter(c => c.id !== id)
-            setActiveId(remaining[0]?.id || '')
+            setActiveId('')
+            setMessages([]);
         }
     }
 
@@ -302,7 +310,7 @@ export function ChatPage() {
             </Sidebar>
 
             <div className="chat-main">
-                <div className="chat-messages">
+                <div className={`chat-messages ${switching ? 'switching' : ''}`}  key={activeId} ref={chatMessagesRef}>
                     {messages.length === 0 && (
                         <div className="chat-empty">
                             <h2>👋 欢迎使用AI对话助手</h2>
