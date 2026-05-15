@@ -80,14 +80,15 @@ export function ChatPage() {
             setMessages([])
         }
     }, [activeId])
+
     useEffect(() => {
-  if (streaming && messagesEndRef.current) {
-    messagesEndRef.current.scrollIntoView({
-      behavior: 'instant',
-      block: 'end'
-    })
-  }
-}, [messages, streaming])
+        if (streaming && messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({
+            behavior: 'instant',
+            block: 'end'
+           })
+        }
+    }, [messages, streaming])
 
     useEffect(() => {
         saveConversations(conversations)
@@ -317,7 +318,7 @@ export function ChatPage() {
                             )}
                             <Bubble
                                 position={msg.role === 'user' ? 'right' : 'left'}
-                                avatar={msg.role === 'user' ? '😊' : '🤖'}
+                                avatar={undefined}
                                 timestamp={msg.timestamp}
                                 status={msg.role === 'assistant' ? (msg.status === 'streaming' ? 'sending' : msg.status === 'error' ? 'failed' : 'sent') : 'sent'}
                             >

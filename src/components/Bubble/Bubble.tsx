@@ -37,7 +37,7 @@ export function Bubble({
     children
 }: BubbleProps) {
     return (
-        <div className={`bubble-wrapper bubble-${position}`}>
+        <div className={`bubble-wrapper bubble-${position} ${!avatar ? 'bubble-no-avatar' : ''}`}>
             {avatar && <div className="bubble-avatar">{avatar}</div>}
             <div className="bubble-content">
                 <div className="bubble-body">{children}</div>

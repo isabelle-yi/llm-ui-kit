@@ -68,3 +68,12 @@ export const NoAvatar: Story = {
         children: '没有头像的消息起泡'
     }
 }
+
+export const AIWithoutAvatar: Story = {
+  args: {
+    position: 'left',
+    timestamp: Date.now(),
+    status: 'sent',
+    children: '这是没有头像的 AI 回复，会占满整个宽度，和 DeepSeek 一样。'
+  }
+}

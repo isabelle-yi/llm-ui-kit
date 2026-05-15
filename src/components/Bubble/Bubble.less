@@ -3,14 +3,22 @@
     gap: 10px;
     margin: 12px 0;
     align-items: flex-start;
-}
 
-&.bubble-left {
-    flex-direction: row;
-}
+    &.bubble-left {
+        flex-direction: row;
+    }
 
-&.bubble-right {
-    flex-direction: row-reverse;
+    &.bubble-right {
+        flex-direction: row-reverse;
+    }
+
+    &.bubble-no-avatar .bubble-content {
+        max-width: 85%;
+    }
+    
+    .bubble-no-avatar {
+        justify-content: center;
+    }
 }
 
 .bubble-avatar {
@@ -53,23 +61,23 @@
     font-size: 12px;
 }
 
-&.bubble-left .bubble-body {
-    background: #f0f0f0;
-    color: #333;
+.bubble-wrapper.bubble-left .bubble-body {
+    background:  #f9fafb;
+    color: #1a1a1a;
     border-top-left-radius: 4px;
 }
 
-&.bubble-right .bubble-body {
+.bubble-wrapper.bubble-right .bubble-body {
     background: #e8f0fe;
     color: #1a1a1a;
     border-top-right-radius: 4px;
 }
 
-&.bubble-left .bubble-footer {
+.bubble-wrapper.bubble-left .bubble-footer {
     padding-left: 4px;
 }
 
-&.bubble-right .bubble-footer {
+.bubble-wrapper.bubble-right .bubble-footer {
     justify-content: flex-end;
     padding-right: 4px;
 }
@@ -87,4 +95,15 @@
         color: #e74c3c;
         cursor: pointer;
     }
+}
+
+.bubble-cursor {
+    display: inline-block;
+    animation: blink 1s step-end infinite;
+    font-weight: bold;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
