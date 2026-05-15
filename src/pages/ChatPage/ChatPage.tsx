@@ -80,10 +80,14 @@ export function ChatPage() {
             setMessages([])
         }
     }, [activeId])
-
     useEffect(() => {
-        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-    }, [messages])
+  if (streaming && messagesEndRef.current) {
+    messagesEndRef.current.scrollIntoView({
+      behavior: 'instant',
+      block: 'end'
+    })
+  }
+}, [messages, streaming])
 
     useEffect(() => {
         saveConversations(conversations)
@@ -339,10 +343,12 @@ export function ChatPage() {
                 </div>
 
                 <div className="chat-input-area">
+                  {messages.length === 0 && (
                     <Prompts
-                        groups={promptsConfig}
-                        onSelect={handlePropmptSelect}
+                      groups={promptsConfig}
+                      onSelect={handlePropmptSelect}
                     />
+                  )}
                     <Sender
                         value={inputValue}
                         onChange={setInputValue}

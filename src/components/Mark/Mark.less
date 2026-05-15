@@ -1,5 +1,8 @@
 .mark-container {
     width: 100%;
+    min-height: 24px;    
+    contain: layout paint;
+    overflow: hidden;
 }
 
 .mark-body {
@@ -8,7 +11,9 @@
     color: #333;
     overflow: hidden;
     transition: max-height 0.3s ease;
-
+    
+    overflow-anchor: none;
+    
     &.mark-folded {
         mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
         -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
