@@ -9,10 +9,12 @@ export interface MarkProps {
     streaming?: boolean
 }
 
+// 流式时：只补全代码块，绝对不修改文本结构（保证流畅）
 function sanitizeChunk(text: string): string {
     let result = text
     result = result.replace(/\r/g, '')
-    result = result.replace(/^#\s+/gm, '`#` ')
+    
+    // 补全未闭合的代码块
     const fenceCount = (result.match(/```/g) || []).length
     if (fenceCount % 2 !== 0) {
         result += '\n```'
@@ -20,31 +22,29 @@ function sanitizeChunk(text: string): string {
     return result
 }
 
+// 结束后：把 # 标题 → 加粗文本（你要的效果）
 function cleanMarkdown(text: string): string {
-  let result = text
-
-  result = result.replace(/(#{1,6})\s*(.+?)\s*\1/g, '$1 $2')
-
-  result = result.replace(/^( {4,}|\t+)(?=\S)/gm, '')
-
-  return result
+    let result = text
+    result = result.replace(/^(#{1,6})\s+(.+)$/gm, '**$2**') // 去掉#标题
+    result = result.replace(/^( {4,}|\t+)(?=\S)/gm, '')
+    return result
 }
 
 export function Mark({ content, streaming = false }: MarkProps) {
     const containerRef = useRef<HTMLDivElement>(null)
-    
-    let displayContent = ''
-    if (streaming) {
-        displayContent = sanitizeChunk(content)
-    } else {
-        displayContent = cleanMarkdown(content)
-    }
 
+    // 直接渲染最新内容，不加任何定时器！！！
+    const displayContent = streaming 
+        ? sanitizeChunk(content) 
+        : cleanMarkdown(content)
+
+    // 流畅自动滚动（不跳、不抖）
     useEffect(() => {
-        if (streaming && containerRef.current) {
-            containerRef.current.scrollTop = containerRef.current.scrollHeight
+        const el = containerRef.current
+        if (el && streaming) {
+            el.scrollTop = el.scrollHeight
         }
-    }, [content, streaming])
+    }, [displayContent])
 
     return (
         <div className="mark-container" ref={containerRef}>
@@ -61,11 +61,11 @@ export function Mark({ content, streaming = false }: MarkProps) {
                             }
 
                             return (
-                               <CodeHighlighter
-                                code={String(children).replace(/\n$/, '')}
-                                language={match?.[1] || 'text'}
-                                maxLines={20}
-                               />
+                                <CodeHighlighter
+                                    code={String(children).replace(/\n$/, '')}
+                                    language={match?.[1] || 'text'}
+                                    maxLines={20}
+                                />
                             )
                         },
                         img({ src, alt }) {

@@ -1,4 +1,4 @@
-import type { ReactNode} from 'react'
+import type { ReactNode } from 'react'
 import './Bubble.less'
 
 export type MessageStatus = 'sending' | 'sent' |'failed'

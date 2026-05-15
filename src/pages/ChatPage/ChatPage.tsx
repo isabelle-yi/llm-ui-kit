@@ -215,16 +215,26 @@ export function ChatPage() {
                 }
             },
             () => {
-                setStreaming(false)
-                setMessages(prev => prev.map(msg => 
-                    msg.role === 'assistant' && msg.status === 'streaming'
-                        ? { ...msg, status: 'done', timestamp: Date.now() }
-                        : msg
-                ))
-                const last = messages[messages.length - 1]
+              setStreaming(false);
+              setMessages((prev: ChatMessageData[]) => {
+                const updated = prev.map(msg => {
+                  if (msg.role === 'assistant' && msg.status === 'streaming') {
+                    return {
+                      ...msg,
+                      status: 'done' as const, 
+                      timestamp: Date.now()
+                    };
+                  }
+                 return msg;
+            });
+
+                const last = updated[updated.length - 1];
                 if (last?.role === 'assistant') {
-                    updateConvPreview(activeId, last.content, Date.now())
+                  updateConvPreview(activeId, last.content, Date.now());
                 }
+
+                return updated;
+             });
             },
             (err) => {
                 setStreaming(false)
