@@ -87,15 +87,6 @@ export function ChatPage() {
     }, [activeId]);
 
     useEffect(() => {
-        if (streaming && messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({
-            behavior: 'instant',
-            block: 'end'
-           })
-        }
-    }, [streaming])
-
-    useEffect(() => {
         saveConversations(conversations)
     }, [conversations])
 
@@ -112,6 +103,13 @@ export function ChatPage() {
             sendRealMessage(text)
         }
     }, [activeId])
+
+    useEffect(() => {
+        const el = chatMessagesRef.current;
+        if (el && streaming) {
+           el.scrollTop = el.scrollHeight;
+        }
+    }, [messages, streaming]);
 
     function handleNewChat() {
         const newId = genId();

@@ -24,7 +24,7 @@ export function CodeHighlighter ({
     const cleanCode = code.replace(/\n$/, '')
     const lineCount = cleanCode.split('\n').length
     const overLimit = lineCount > maxLines
-    const shouldFold = overLimit && !expanded
+    const shouldFold = false
 
     const displayCode = shouldFold
     ? cleanCode.split('\n').slice(0, maxLines).join('\n') + '\n// ...更多代码已折叠'
