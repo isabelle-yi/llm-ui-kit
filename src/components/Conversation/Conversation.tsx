@@ -142,7 +142,7 @@ export function ConversationItem({
         </span>
       </div>
       <div className="conversation-item-preview"> 
-        {lastMessage}
+        {lastMessage || '新会话'}
       </div>
       
       <div className="conversation-item-actions">
