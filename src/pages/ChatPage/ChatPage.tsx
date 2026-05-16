@@ -295,7 +295,7 @@ export function ChatPage() {
 
     return (
         <div className="chat-page">
-            <Sidebar title="AI 对话" onNewChat={handleNewChat}>
+            <Sidebar>
                 <Conversation
                     conversations={conversations}
                     activeId={activeId}
@@ -308,7 +308,18 @@ export function ChatPage() {
             </Sidebar>
 
             <div className="chat-main">
+                <div className="chat-top-nav">
+                    <div className="nav-left">
+                       <h2>AI 对话</h2>
+                    </div>
+                    <div className="nav-right">
+                        <button onClick={handleNewChat} style={{ padding: '8px 12px' }}>+ 新建</button>
+                    </div>
+                </div>
+
+               <div className="chat-content-wrapper">
                 <div className={`chat-messages ${switching ? 'switching' : ''}`}  key={activeId} ref={chatMessagesRef}>
+                    <div className="messages-inner">
                     {messages.length === 0 && (
                         <div className="chat-empty">
                             <h2>👋 欢迎使用AI对话助手</h2>
@@ -330,7 +341,7 @@ export function ChatPage() {
                                 >
                                     {msg.thinkContent}
                                 </Think>
-                            )}
+                            )} 
                             <Bubble
                                 position={msg.role === 'user' ? 'right' : 'left'}
                                 avatar={undefined}
@@ -355,7 +366,9 @@ export function ChatPage() {
                         </div>
                     ))}
 
-                    <div ref={messagesEndRef} />
+                        <div ref={messagesEndRef} />
+                      </div>
+                  </div>
                 </div>
 
                 <div className="chat-input-area">
